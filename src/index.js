@@ -4,7 +4,7 @@ const app = express()
 const handlebars = require('express-handlebars')
 const methodOverride = require('method-override');
 const port = 3000
-// const router = require('./routers')
+const router = require('./routers')
 const db = require('./config/db')
 require("dotenv").config();
 const connectDB = require("../connectMongo");
