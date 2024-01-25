@@ -17,7 +17,10 @@ class CoursesController {
     // [GET] /create
     create(req, res, next) {
         res.json({
-            message: 'Rendering JSON for create route',
+            id: '1',
+            name:'hau',
+            description:'test',
+            image:'hauimg'
         });
     }
 
