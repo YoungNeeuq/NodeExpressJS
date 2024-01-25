@@ -1,50 +1,54 @@
 const Course = require('../models/Course');
-const {mongooseToObject} = require('../util/mongoose');
-const {mongoosesToObject} = require('../util/mongoose');
+const { mongooseToObject } = require('../util/mongoose');
+const { mongoosesToObject } = require('../util/mongoose');
+
 class CoursesController {
-    //GET /
-    index(req,res,next){
+    // GET /
+    index(req, res, next) {
         Course.find({})
-        .then(courses =>{
-          res.render('courses', {
-            courses: mongoosesToObject(courses),
-        });
-        })
-      }
-      
+            .then(courses => {
+                res.json({
+                    courses: mongoosesToObject(courses),
+                });
+            })
+            .catch(error => next(error));
+    }
+
     // [GET] /create
-      create(req, res, next) {
-        res.render('courses/create');
+    create(req, res, next) {
+        res.json({
+            message: 'Rendering JSON for create route',
+        });
     }
 
     // [POST] /store
     store(req, res, next) {
-        // insert a course into document in DB
         const newCourse = new Course(req.body);
 
         newCourse
             .save()
-            .then((course) => res.redirect('/courses'))
-            .catch((error) => next(error));
+            .then(course => res.json({ course }))
+            .catch(error => next(error));
     }
 
     // [GET] /:slug
     show(req, res, next) {
-        Course.findOne({slug: req.params.slug})
-            .then((course) => {
-                res.render('courses/course', {
+        Course.findOne({ slug: req.params.slug })
+            .then(course => {
+                res.json({
                     course: mongooseToObject(course),
                 });
             })
-            .catch((error) => next(error));
+            .catch(error => next(error));
     }
-    //  [GET] /courses/:id/edit
-     edit(req, res, next) {
+
+    // [GET] /courses/:id/edit
+    edit(req, res, next) {
         Course.findById(req.params.id)
-            .then((course) =>
-                res.render('courses/edit', {
+            .then(course =>
+                res.json({
                     course: mongooseToObject(course),
-                }),
+                })
             )
             .catch(next);
     }
@@ -52,13 +56,14 @@ class CoursesController {
     // [PUT] /courses/:id
     update(req, res, next) {
         Course.updateOne({ _id: req.params.id }, req.body)
-            .then(() => res.redirect('/courses'))
+            .then(() => res.json({ message: 'Course updated successfully' }))
             .catch(next);
     }
+
     // [DELETE] /courses/:id
     destroy(req, res, next) {
         Course.deleteOne({ _id: req.params.id })
-            .then(() => res.redirect('back'))
+            .then(() => res.json({ message: 'Course deleted successfully' }))
             .catch(next);
     }
 }
