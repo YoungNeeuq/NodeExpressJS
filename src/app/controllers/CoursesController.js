@@ -23,15 +23,7 @@ class CoursesController {
 
     // [POST] /store
     store(req, res, next) {
-        const newCourse = new Course({
-            id: "65b148a54f818b83dd52a4ef",
-        name: "Lộ trình học Back-end",
-        description: "Lập trình viên Back-end là người xây dựng ra giao diện websites. Trong phần này F8 sẽ chia sẻ cho bạn lộ trình để trở thành lập trình viên Back-end nhé.",
-        image: "https://files.fullstack.edu.vn/f8-prod/learning-paths/2/63b4642136f3e.png",
-        createdAt: "2024-01-24T17:28:05.576Z",
-        updatedAt: "2024-01-24T17:28:05.576Z",
-        slug: "lo-trinh-hoc-back-end",
-        });
+        const newCourse = new Course(req.body);
 
         newCourse
             .save()
