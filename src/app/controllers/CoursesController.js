@@ -20,10 +20,10 @@ class CoursesController {
                 courses: mongoosesToObject(result.docs),
                 pageInfo: {
                     totalItems: result.totalDocs,
-                                totalPages,
-                                currentPage,
-                                previousPage,
-                                nextPage,
+                    totalPages: result.totalPages,
+                    currentPage: result.page,
+                    nextPage:nextPage,
+                    previousPage:previousPage
                 },
             });
         } catch (error) {
