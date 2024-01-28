@@ -18,6 +18,32 @@ class CoursesController {
     // GET /
     async index(req, res, next) {
         try {
+            const { page = 1, limit = 5 } = req.query;
+
+            const result = await Course.paginate({}, { page, limit });
+            res.json({
+                courses: mongoosesToObject(result.docs),
+                pageInfo: {
+                    totalItems: result.totalDocs,
+                    totalPages: result.totalPages,
+                    currentPage: result.page
+                },
+            });
+        } catch (error) {
+            console.error(error);
+            next(error);
+        }
+    }
+    // [GET] /create
+    create(req, res, next) {
+        res.json({
+            message: 'Rendering JSON for create route',
+        });
+    }
+
+    // [POST] /
+    store(req, res, next) {
+        try {
             isNonEmptyValue(req.body.name, 'Name');
             isNonEmptyValue(req.body.description, 'Description');
             isNonEmptyValue(req.body.image, 'Image');
@@ -30,36 +56,6 @@ class CoursesController {
                 .catch(error => next(error));
         } catch (error) {
             return res.status(400).json({ error: error.message });
-        }
-    }
-    // [GET] /create
-    create(req, res, next) {
-        res.json({
-            message: 'Rendering JSON for create route',
-        });
-    }
-
-    // [POST] /
-    storeValidationRules() {
-        return [
-            body('name').notEmpty().withMessage('Name is required').isString().withMessage('Name must be a string'),
-            body('description').notEmpty().withMessage('Description is required').isString().withMessage('Description must be a string'),
-            body('image').notEmpty().withMessage('Image is required').isString().withMessage('Image must be a string'),
-        ];
-    }
-    store(req, res, next) {
-        const errors = validationResult(req);
-
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: "Sai roi nha" });
-        } else {
-
-        const newCourse = new Course(req.body);
-
-        newCourse
-            .save()
-            .then(course => res.json({ course }))
-            .catch(error => next(error));
         }
     }
 
