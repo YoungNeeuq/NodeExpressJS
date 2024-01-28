@@ -3,6 +3,13 @@ const { mongooseToObject } = require('../util/mongoose');
 const { mongoosesToObject } = require('../util/mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const { body, validationResult } = require('express-validator');
+const isNonEmptyValue = (value, field) => {
+    if (value === '' || (field !== 'Name' && !isNaN(value))) {
+        throw new Error(`${field} must be a non-empty value`);
+    }
+
+    return true;
+};
 class CoursesController {
     constructor() {
         Course.paginate = mongoosePaginate.paginate;
@@ -11,20 +18,18 @@ class CoursesController {
     // GET /
     async index(req, res, next) {
         try {
-            const { page = 1, limit = 5 } = req.query;
+            isNonEmptyValue(req.body.name, 'Name');
+            isNonEmptyValue(req.body.description, 'Description');
+            isNonEmptyValue(req.body.image, 'Image');
 
-            const result = await Course.paginate({}, { page, limit });
-            res.json({
-                courses: mongoosesToObject(result.docs),
-                pageInfo: {
-                    totalItems: result.totalDocs,
-                    totalPages: result.totalPages,
-                    currentPage: result.page
-                },
-            });
+            const newCourse = new Course(req.body);
+
+            newCourse
+                .save()
+                .then(course => res.json({ course }))
+                .catch(error => next(error));
         } catch (error) {
-            console.error(error);
-            next(error);
+            return res.status(400).json({ error: error.message });
         }
     }
     // [GET] /create
