@@ -11,7 +11,7 @@ class CoursesController {
             const result = await Course.paginate({}, { page, limit });
 
             res.json({
-                courses: mongoosesToObject(result.docs),
+                courses: result,
                 pageInfo: {
                     totalItems: result.totalDocs,
                     totalPages: result.totalPages,
