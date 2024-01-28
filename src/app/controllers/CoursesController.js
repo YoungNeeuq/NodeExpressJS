@@ -6,7 +6,7 @@ class CoursesController {
     // GET /
     index(req, res, next) {
         const { page = 1, limit = 5 } = req.query; // Số trang và số lượng items trên mỗi trang
-
+        console.log(result);
         Course.paginate({}, { page, limit })
             .then(result => {
                 res.json({
