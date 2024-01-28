@@ -5,7 +5,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 class CoursesController {
     // GET /
     index(req, res, next) {
-        const { page = 1, limit = 10 } = req.query; // Số trang và số lượng items trên mỗi trang
+        const { page = 1, limit = 5 } = req.query; // Số trang và số lượng items trên mỗi trang
 
         Course.paginate({}, { page, limit })
             .then(result => {
