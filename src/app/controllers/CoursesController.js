@@ -2,6 +2,7 @@ const Course = require('../models/Course');
 const { mongooseToObject } = require('../util/mongoose');
 const { mongoosesToObject } = require('../util/mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
+const { body, validationResult } = require('express-validator');
 class CoursesController {
     constructor() {
         Course.paginate = mongoosePaginate.paginate;
@@ -12,18 +13,13 @@ class CoursesController {
         try {
             const { page = 1, limit = 5 } = req.query;
 
-            // Sử dụng paginate method từ mongoosePaginate
             const result = await Course.paginate({}, { page, limit });
-            const previousPage = currentPage > 1 ? currentPage - 1 : null;
-            const nextPage = currentPage < totalPages ? currentPage + 1 : null;
             res.json({
                 courses: mongoosesToObject(result.docs),
                 pageInfo: {
                     totalItems: result.totalDocs,
                     totalPages: result.totalPages,
-                    currentPage: result.page,
-                    nextPage:nextPage,
-                    previousPage:previousPage
+                    currentPage: result.page
                 },
             });
         } catch (error) {
@@ -38,8 +34,23 @@ class CoursesController {
         });
     }
 
-    // [POST] /store
+    // [POST] /
+    storeValidationRules() {
+        return [
+            body('name')
+                .notEmpty().withMessage('Name is required')
+                .not().isNumeric().withMessage('Name cannot be a number'),
+            body('description').notEmpty().withMessage('Description is required'),
+            body('image').notEmpty().withMessage('Image is required'),
+        ];
+    }
     store(req, res, next) {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const newCourse = new Course(req.body);
 
         newCourse
