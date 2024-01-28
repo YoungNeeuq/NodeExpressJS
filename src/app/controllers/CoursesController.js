@@ -1,19 +1,25 @@
 const Course = require('../models/Course');
 const { mongooseToObject } = require('../util/mongoose');
 const { mongoosesToObject } = require('../util/mongoose');
-
+const mongoosePaginate = require('mongoose-paginate-v2');
 class CoursesController {
     // GET /
     index(req, res, next) {
-        Course.find({})
-            .then(courses => {
+        const { page = 1, limit = 10 } = req.query; // Số trang và số lượng items trên mỗi trang
+
+        Course.paginate({}, { page, limit })
+            .then(result => {
                 res.json({
-                    courses: mongoosesToObject(courses),
+                    courses: mongoosesToObject(result.docs),
+                    pageInfo: {
+                        totalItems: result.totalDocs,
+                        totalPages: result.totalPages,
+                        currentPage: result.page,
+                    },
                 });
             })
             .catch(error => next(error));
     }
-
     // [GET] /create
     create(req, res, next) {
         res.json({
@@ -67,5 +73,5 @@ class CoursesController {
             .catch(next);
     }
 }
-
+Course.plugin(mongoosePaginate);
 module.exports = new CoursesController();
