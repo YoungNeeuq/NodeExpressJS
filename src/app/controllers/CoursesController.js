@@ -4,21 +4,24 @@ const { mongoosesToObject } = require('../util/mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 class CoursesController {
     // GET /
-    index(req, res, next) {
-        const { page = 1, limit = 5 } = req.query; // Số trang và số lượng items trên mỗi trang
-        console.log(result);
-        Course.paginate({}, { page, limit })
-            .then(result => {
-                res.json({
-                    courses: mongoosesToObject(result.docs),
-                    pageInfo: {
-                        totalItems: result.totalDocs,
-                        totalPages: result.totalPages,
-                        currentPage: result.page,
-                    },
-                });
-            })
-            .catch(error => next(error));
+    async index(req, res, next) {
+        try {
+            const { page = 1, limit = 5 } = req.query; 
+
+            const result = await Course.paginate({}, { page, limit });
+
+            res.json({
+                courses: mongoosesToObject(result.docs),
+                pageInfo: {
+                    totalItems: result.totalDocs,
+                    totalPages: result.totalPages,
+                    currentPage: result.page,
+                },
+            });
+        } catch (error) {
+            console.error(error); 
+            next(error); 
+        }
     }
     // [GET] /create
     create(req, res, next) {
