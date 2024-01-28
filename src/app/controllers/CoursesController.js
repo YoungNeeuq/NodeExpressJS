@@ -73,5 +73,4 @@ class CoursesController {
             .catch(next);
     }
 }
-Course.plugin(mongoosePaginate);
 module.exports = new CoursesController();
