@@ -3,16 +3,15 @@ const { mongooseToObject } = require('../util/mongoose');
 const { mongoosesToObject } = require('../util/mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const { body, validationResult } = require('express-validator');
-const isNonEmptyValue = (value, field) => {
-    if (value === '' ) {
-        throw new Error(`${field} must be a non-empty value`);
-    }
-
-    return true;
-};
-const isNonNumericValue = (value, field) => {
-    if (field !== 'Name' && /\d/.test(value)) {
-        throw new Error(`${field} cannot contain numeric characters`);
+const isNonNumericAndNotEmpty = (value, field) => {
+    if (field === 'Name') {
+        if (value === '' || /\d/.test(value)) {
+            throw new Error(`${field} cannot be empty and cannot contain numeric characters`);
+        }
+    } else {
+        if (value === '') {
+            throw new Error(`${field} cannot be empty`);
+        }
     }
 
     return true;
@@ -51,9 +50,9 @@ class CoursesController {
     // [POST] /
     store(req, res, next) {
         try {
-            isNonNumericValue(req.body.name, 'Name');
-            isNonEmptyValue(req.body.description, 'Description');
-            isNonEmptyValue(req.body.image, 'Image');
+            isNonNumericAndNotEmpty(req.body.name, 'Name');
+            isNonNumericAndNotEmpty(req.body.description, 'Description');
+            isNonNumericAndNotEmpty(req.body.image, 'Image');
 
             const newCourse = new Course(req.body);
 
