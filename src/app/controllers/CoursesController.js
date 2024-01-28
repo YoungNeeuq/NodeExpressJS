@@ -49,7 +49,7 @@ class CoursesController {
 
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
-        }
+        } else {
 
         const newCourse = new Course(req.body);
 
@@ -57,6 +57,7 @@ class CoursesController {
             .save()
             .then(course => res.json({ course }))
             .catch(error => next(error));
+        }
     }
 
     // [GET] /:slug
