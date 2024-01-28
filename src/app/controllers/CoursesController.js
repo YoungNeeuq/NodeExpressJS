@@ -37,18 +37,16 @@ class CoursesController {
     // [POST] /
     storeValidationRules() {
         return [
-            body('name')
-                .notEmpty().withMessage('Name is required')
-                .not().isNumeric().withMessage('Name cannot be a number'),
-            body('description').notEmpty().withMessage('Description is required'),
-            body('image').notEmpty().withMessage('Image is required'),
+            body('name').notEmpty().withMessage('Name is required').isString().withMessage('Name must be a string'),
+            body('description').notEmpty().withMessage('Description is required').isString().withMessage('Description must be a string'),
+            body('image').notEmpty().withMessage('Image is required').isString().withMessage('Image must be a string'),
         ];
     }
     store(req, res, next) {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return res.status(400).json({ errors: "Sai roi nha" });
         } else {
 
         const newCourse = new Course(req.body);
