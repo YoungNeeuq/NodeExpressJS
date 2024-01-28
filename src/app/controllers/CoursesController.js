@@ -89,9 +89,17 @@ class CoursesController {
 
     // [PUT] /courses/:id
     update(req, res, next) {
-        Course.updateOne({ _id: req.params.id },req.body)
-            .then(() => res.json({ message: 'Course updated successfully' }))
-            .catch(next);
+        try {
+            isNonNumericAndNotEmpty(req.body.name, 'Name');
+            isNonNumericAndNotEmpty(req.body.description, 'Description');
+            isNonNumericAndNotEmpty(req.body.image, 'Image');
+
+            Course.updateOne({ _id: req.params.id }, req.body)
+                .then(() => res.json({ message: 'Course updated successfully' }))
+                .catch(next);
+        } catch (error) {
+            return res.status(400).json({ error: error.message });
+        }
     }
 
     // [DELETE] /courses/:id
