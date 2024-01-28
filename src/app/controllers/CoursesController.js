@@ -4,8 +4,15 @@ const { mongoosesToObject } = require('../util/mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const { body, validationResult } = require('express-validator');
 const isNonEmptyValue = (value, field) => {
-    if (value === '' || (field !== 'Name' && !isNaN(value))) {
+    if (value === '' ) {
         throw new Error(`${field} must be a non-empty value`);
+    }
+
+    return true;
+};
+const isNonNumericValue = (value, field) => {
+    if (field !== 'Name' && /\d/.test(value)) {
+        throw new Error(`${field} cannot contain numeric characters`);
     }
 
     return true;
@@ -44,7 +51,7 @@ class CoursesController {
     // [POST] /
     store(req, res, next) {
         try {
-            isNonEmptyValue(req.body.name, 'Name');
+            isNonNumericValue(req.body.name, 'Name');
             isNonEmptyValue(req.body.description, 'Description');
             isNonEmptyValue(req.body.image, 'Image');
 
