@@ -3,15 +3,20 @@ const { mongooseToObject } = require('../util/mongoose');
 const { mongoosesToObject } = require('../util/mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 class CoursesController {
+    constructor() {
+        Course.paginate = mongoosePaginate.paginate;
+    }
+
     // GET /
     async index(req, res, next) {
         try {
-            const { page = 1, limit = 5 } = req.query; 
+            const { page = 1, limit = 5 } = req.query;
 
+            // Sử dụng paginate method từ mongoosePaginate
             const result = await Course.paginate({}, { page, limit });
 
             res.json({
-                courses: result,
+                courses: mongoosesToObject(result.docs),
                 pageInfo: {
                     totalItems: result.totalDocs,
                     totalPages: result.totalPages,
@@ -19,8 +24,8 @@ class CoursesController {
                 },
             });
         } catch (error) {
-            console.error(error); 
-            next(error); 
+            console.error(error);
+            next(error);
         }
     }
     // [GET] /create
