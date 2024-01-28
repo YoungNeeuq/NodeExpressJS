@@ -14,13 +14,16 @@ class CoursesController {
 
             // Sử dụng paginate method từ mongoosePaginate
             const result = await Course.paginate({}, { page, limit });
-
+            const previousPage = currentPage > 1 ? currentPage - 1 : null;
+            const nextPage = currentPage < totalPages ? currentPage + 1 : null;
             res.json({
                 courses: mongoosesToObject(result.docs),
                 pageInfo: {
                     totalItems: result.totalDocs,
-                    totalPages: result.totalPages,
-                    currentPage: result.page,
+                                totalPages,
+                                currentPage,
+                                previousPage,
+                                nextPage,
                 },
             });
         } catch (error) {
