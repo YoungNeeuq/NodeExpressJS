@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
-async function connect() {
+import mongoose from 'mongoose';
+
+async function connect(): Promise<void> {
     try {
         await mongoose.connect('mongodb://127.0.0.1/mgdb_test_dev');
         console.log('Connect DB okela');
@@ -8,4 +9,4 @@ async function connect() {
     }
 }
 
-module.exports = { connect };
+export { connect };
